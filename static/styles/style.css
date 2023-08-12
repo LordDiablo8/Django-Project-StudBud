@@ -3,13 +3,13 @@
 :root {
   --color-main: #0ca2cf;
   --color-main-light: #e1f6fb;
-  --color-dark: #567783;
-  --color-dark-medium: #24252a;
+  --color-dark: #0e1010;
+  --color-dark-medium: #2d2d32;
   --color-dark-light: #696d97;
-  --color-light: #b3a9a9;
-  --color-gray: #383030;
-  --color-light-gray: #4a4e4e;
-  --color-bg: #242527;
+  --color-light: #ffffff;
+  --color-gray: #6c6c6c;
+  --color-light-gray: #4b6161;
+  --color-bg: #4e6e76;
   --color-success: #5dd693;
   --color-error: #fc4b0b;
 }

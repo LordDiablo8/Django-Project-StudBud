@@ -1,13 +1,17 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-
+import os
 from django.db.models import Q
 from .models import Room, Topic, Message, User
 from .forms import RoomForm, UserForm, MyUserCreationFomr
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+
+
+#Changes:
+from .badwords import contains_bad_words, load_bad_words
 
 # Create your views here.
 
@@ -85,14 +89,31 @@ def room(request, pk):
     room = Room.objects.get(id=pk)
     room_messages=room.message_set.all()
     participants = room.participants.all()
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_file_path = os.path.join(script_dir, 'badwords.csv')
+
+    bad_words = load_bad_words(csv_file_path)
     if request.method == 'POST':
-        message = Message.objects.create(
-            user=request.user,
-            room = room,
-            body = request.POST.get('body')
-        )
-        room.participants.add(request.user)
-        return redirect('room', pk=room.id)
+        try:
+            message_body = request.POST.get('body')            
+            if contains_bad_words(message_body, bad_words):
+                messages.error(request, "Your message contains Bad words")
+                return redirect('room', pk=room.id)
+        
+            else:
+                message = Message.objects.create(
+                user=request.user,
+                room = room,
+                body = request.POST.get('body')
+            )
+            room.participants.add(request.user)
+            return redirect('room', pk=room.id)
+        except:
+            messages.error(request, "Could not find badwords")
+            return redirect('home')
+            
+        
     context = {'room': room, 'room_messages':room_messages, 'participants':participants}
     return render(request, 'base/room.html', context)
 
@@ -161,7 +182,7 @@ def deleteRoom(request, pk):
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
-    if request.user != message.user :
+    if request.user != message.user:
         return HttpResponse('You are not allowed to delete this')
     if request.method == 'POST':
         message.delete()
