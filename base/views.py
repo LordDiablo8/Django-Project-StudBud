@@ -34,16 +34,17 @@ def loginPage(request):
         try:
             user = User.objects.get(email=email)
         except:
-            messages.error(request, 'User doesnt exist')
+            messages.error(request, 'User doesnot exist')
         
         user = authenticate(request, email=email, password=password)
 
         if user is not None:
             login(request, user)
+           
             return redirect('home')
         else:
-            messages.error(request, 'Username or password dont exist')
-            return redirect('home')
+            messages.error(request, 'Email or password does not exist. Please try again')
+            return render(request, 'base/login_register.html')
         
 
     context={'page':page}
@@ -62,6 +63,7 @@ def resgisterPage(request):
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
+            messages.SUCCESS(request, "Account has been created!")
             login(request, user)
             return redirect('home')
         else:
@@ -98,7 +100,7 @@ def room(request, pk):
         try:
             message_body = request.POST.get('body')            
             if contains_bad_words(message_body, bad_words):
-                messages.error(request, "Your message contains Bad words")
+                messages.error(request, "Your message contains offensive words. Please be polite")
                 return redirect('room', pk=room.id)
         
             else:
