@@ -87,15 +87,24 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'user_attributes': ('username', 'email'),
+        },
+        'ERRORS': {
+            'user_attribute_similar': "The password is too similar to %(user_attributes)s.",
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        
     },
 ]
 
@@ -134,3 +143,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+_ = lambda s: s
+PASSWORD_ERROR_MESSAGES = {
+    "password_too_common": _("This password is too common")
+}

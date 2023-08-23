@@ -63,11 +63,10 @@ def resgisterPage(request):
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
-            messages.SUCCESS(request, "Account has been created!")
+            messages.success(request, "Account has been created!")
             login(request, user)
             return redirect('home')
-        else:
-            messages.error(request, 'Could not register User')
+    
     return render(request, 'base/login_register.html', {'form':form})
 
 
